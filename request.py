@@ -10,6 +10,7 @@ Created on Sun Jul  4 09:05:20 2021
 import pandas as pd
 import requests
 from requests.auth import HTTPBasicAuth
+import time
 
 
 def get_columnheaders(url):
@@ -34,5 +35,7 @@ def get_nextAPIs(url_1, url_2, column_name, username, password, url_2b=None):
         data2_json = r.json()
         data2 = pd.DataFrame(data2_json)
         df_nextAPI = df_nextAPI.append(data2)
+
+        time.sleep(r.elapsed.total_seconds())
 
     return df_nextAPI
