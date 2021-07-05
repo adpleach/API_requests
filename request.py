@@ -11,33 +11,28 @@ import pandas as pd
 import requests
 from requests.auth import HTTPBasicAuth
 
-r = requests.get('url')
-courses_json = r.json()
-courses = pd.DataFrame(courses_json)
-# course_users = json.dumps(course_json) - alternative using json library
 
-print(courses.columns)
+def get_columnheaders(url):
+    r = requests.get(url)
+    data_json = r.json()
+    data = pd.DataFrame(data_json)
+    # course_users = json.dumps(course_json) - alternative using json library
+    return data.columns
 
-df_course = pd.DataFrame()
 
-for i in courses['id']:
-    course_id = i
-    course_url = f'url/{course_id}/users'
-    r = requests.get(course_url, auth=HTTPBasicAuth(
-        'user', 'password'))
-    course_json = r.json()
-    course = pd.DataFrame(course_json)
-    df_course = df_course.append(course)
+def get_nextAPIs(url_1, url_2, column_name, username, password, url_2b=None):
+    r = requests.get(url_1)
+    data_json = r.json()
+    data = pd.DataFrame(data_json)
 
-df_user = pd.DataFrame()
+    df_nextAPI = pd.DataFrame()
 
-for i in df_course['id']:
-    user_id = i
-    user_url = f'url/{user_id}/course-progress'
-    r = requests.get(user_url, auth=HTTPBasicAuth(
-        'user', 'password'))
-    user_json = r.json()
-    user = pd.DataFrame(user_json)
-    df_user = df_user.append(user)
+    for i in data[column_name]:
+        data_id = i
+        data_url = f'{url_2}/{data_id}/{url_2b}'
+        r = requests.get(data_url, auth=HTTPBasicAuth(username, password))
+        data2_json = r.json()
+        data2 = pd.DataFrame(data2_json)
+        df_nextAPI = df_nextAPI.append(data2)
 
-print(df_user.head())
+    return df_nextAPI
